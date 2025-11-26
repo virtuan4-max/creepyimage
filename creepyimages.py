@@ -52,15 +52,19 @@ PROMPTS = {
 # ------------------------------
 @st.cache_resource
 def load_pipeline():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    dtype = torch.float16 if device == "cuda" else torch.float32
+
     pipe = StableDiffusionPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float32
-    ).to("cpu")
+        torch_dtype=dtype
+    ).to(device)
 
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-
-    # Disable NSFW filter
     pipe.safety_checker = lambda images, **kwargs: (images, [False] * len(images))
+
+    pipe.enable_attention_slicing()
+    pipe.enable_cpu_offload()
 
     return pipe
 
@@ -156,4 +160,5 @@ if st.button("🎨 Generate Image"):
             file_name=filename,
             mime="image/png"
         )
+
 
