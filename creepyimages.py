@@ -54,8 +54,8 @@ PROMPTS = {
 def load_pipeline():
     pipe = StableDiffusionPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16
-    ).to("cuda")
+        torch_dtype=torch.float32
+    ).to("cpu")
 
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
 
@@ -156,3 +156,4 @@ if st.button("🎨 Generate Image"):
             file_name=filename,
             mime="image/png"
         )
+
