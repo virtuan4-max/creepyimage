@@ -65,8 +65,11 @@ def load_pipeline():
 
     pipe.enable_attention_slicing()
     pipe.enable_cpu_offload()
+    pipe.enable_vae_slicing()
+    pipe.enable_vae_tiling()
 
     return pipe
+
 
 
 pipe = load_pipeline()
@@ -160,5 +163,6 @@ if st.button("🎨 Generate Image"):
             file_name=filename,
             mime="image/png"
         )
+
 
 
